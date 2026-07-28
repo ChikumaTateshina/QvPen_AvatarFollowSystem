@@ -57,7 +57,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 83307646262356034}
   attachDistance: 0.2
   includeLocalPlayer: 1
-  maxRecords: 1023
+  maxRecords: 511
   candidateBoneIds: 
   boneReachOverrideIds: 
   boneReachOverrides: []

@@ -2,7 +2,16 @@
  QvPen Avatar Follow System  導入方法
 =====================================================================
 
-このギミックは、アバターの近くで QVPen を使って描いた線(文字など)を、そのアバターの最寄りのボーンに追従させ、全プレイヤーへ同期します。
+このギミックは，アバターの近くで QVPen を使って描いた線(文字など)を，そのアバターの最寄りのボーンに追従させ，全プレイヤーへ同期します．
+
+
+─────────────────────────────────────────────────────────────────
+ 0. サンプルワールド(動作を試せます)
+─────────────────────────────────────────────────────────────────
+  導入前に，実際の動作を試せるサンプルワールドを公開しています．
+
+    QvPen_AvatarFollowSystem_SampleWorld
+    https://vrchat.com/home/launch?worldId=wrld_4d1f9a3b-ee61-475e-8769-bffc2bbb6ae3
 
 
 ─────────────────────────────────────────────────────────────────
@@ -11,51 +20,129 @@
   (1) VRChat SDK3 - Worlds
   (2) QvPen ← 先にワールドへ導入しておいてください
 
-  ※ 本製品に QVPen 本体は含まれません。QVPen は各自で入手・導入してください。
+  ※ 本製品に QVPen 本体は含まれません．QVPen は各自で入手・導入してください．
 
 
 ─────────────────────────────────────────────────────────────────
  2. 導入手順
 ─────────────────────────────────────────────────────────────────
-  (1) QVPen をワールドに導入し、ペンで描ける状態にしておく。
+  (1) QVPen をワールドに導入し，ペンで描ける状態にしておく．
 
-  (2) Boothからダウンロードしたzipファイルを解凍する。  
+  (2) Boothからダウンロードしたzipファイルを解凍する．
 
-  (3) 本製品の「QvPen_AvatarFollowSystem.unitypackage」を、プロジェクトへインポート(ドラッグ&ドロップ)する。
+  (3) 本製品の「QvPen_AvatarFollowSystem.unitypackage」を，プロジェクトへインポート(ドラッグ&ドロップ)する．
 
-  (4) 「QvPen Avatar Follow System.prefab」というPrefabアセットをHierarchyにドラッグ&ドロップする。
-      ※ シーンに 1 個 配置し、常駐させてください(実行中に無効化しない)。
-      ※ 配置場所はどこでも構いません(原点付近を推奨)。
+  (4) 「QvPen_AvatarFollowSystem.prefab」というPrefabアセットをHierarchyにドラッグ&ドロップする．
+      ※ シーンに 1 個 配置し，常駐させてください(実行中に無効化しない)．
+      ※ 配置場所はどこでも構いません(原点付近を推奨)．
 
-  (5) 以上で完了です。実行時に QVPen の生成物を自動検出して動作します。
-      QVPen 側の設定変更や、参照の手動割り当ては不要です。
+  (5) 以上で完了です．実行時に QVPen の生成物を自動検出して動作します．
+      QVPen 側の設定変更や，参照の手動割り当ては不要です．
 
-  (6) ワールドをビルド / アップロードする。
+  (6) ワールドをビルド / アップロードする．
 
 
 ─────────────────────────────────────────────────────────────────
  3. インスペクタ設定（原則初期設定のまま変更する必要はありません）
 ─────────────────────────────────────────────────────────────────
   ● Attach Distance              (既定 0.2)
-      ボーンからこの距離(m)以内に描き終えた線が追従対象になる「既定リーチ」。
-      大きいほど付きやすくなります。
+      ボーンからこの距離(m)以内に描き終えた線が追従対象になる「既定リーチ」．
+      大きいほど付きやすくなります．
 
   ● Include Local Player         (既定 ON)
-      描いた本人(自分)のボーンも追従対象に含めるか。
+      描いた本人(自分)のボーンも追従対象に含めるか．
 
-  ● Max Records                  (既定 1023)
-      同時に追従できる最大本数。超えると古いものから自動的に切り離します。
-      大きくすると同期帯域が増えます。適宜調節してください。
+  ● Max Records                  (既定 511)
+      同時に追従できる最大本数．超えると古いものから自動的に切り離します．
+      大きくすると同期帯域が増えます(1本あたり 72byte)．適宜調節してください．
+      ※ VRChat の同期上限(約 49KB)があるため，680 本程度までを目安にしてください．上限を超えた場合は自動的に古い記録を間引いて同期を継続します．
 
 
 ─────────────────────────────────────────────────────────────────
  4. 制限事項
 ─────────────────────────────────────────────────────────────────
-  ・追従できるのは「ヒューマノイドのボーン」のみです。
-  ・非ヒューマノイドアバター、服・髪・しっぽ・装飾などには追従できません(VRChat の仕様上、アバターのメッシュや追加ボーンを取得できないため)。
-  ・アバターが高速で移動・回転している最中に描くと、同期が各クライアントへ届くまでの移動ぶん、線がアバターから少しずれて貼り付く場合があります。
+  ・追従できるのは「ヒューマノイドのボーン」のみです．
+  ・非ヒューマノイドアバター，服・髪・しっぽ・装飾などには追従できません(VRChat の仕様上，アバターのメッシュや追加ボーンを取得できないため)．
+  ・アバターが高速で移動・回転している最中に描くと，同期が各クライアントへ届くまでの移動ぶん，線がアバターから少しずれて貼り付く場合があります．
 
 
 ─────────────────────────────────────────────────────────────────
 お問い合わせ : [https://okumanecco.booth.pm/] [https://twitter.com/Okumanecco]
+=====================================================================
+
+
+#####################################################################
+#  English  (Translation)                                           #
+#####################################################################
+
+=====================================================================
+ QvPen Avatar Follow System  Setup Guide
+=====================================================================
+
+This gimmick makes lines (letters, etc.) drawn with QVPen near an avatar attach to the nearest bone of that avatar, and synchronizes them to all players.
+
+
+─────────────────────────────────────────────────────────────────
+ 0. Sample World (Try it out)
+─────────────────────────────────────────────────────────────────
+  A sample world is published so that you can try the actual behavior before installing.
+
+    QvPen_AvatarFollowSystem_SampleWorld
+    https://vrchat.com/home/launch?worldId=wrld_4d1f9a3b-ee61-475e-8769-bffc2bbb6ae3
+
+
+─────────────────────────────────────────────────────────────────
+ 1. Requirements (Prerequisites)
+─────────────────────────────────────────────────────────────────
+  (1) VRChat SDK3 - Worlds
+  (2) QvPen <- Please install it into your world first
+
+  * QVPen itself is NOT included in this product. Please obtain and install QVPen yourself.
+
+
+─────────────────────────────────────────────────────────────────
+ 2. Setup Steps
+─────────────────────────────────────────────────────────────────
+  (1) Install QVPen into your world and make sure you can draw with the pen.
+
+  (2) Extract the zip file downloaded from Booth.
+
+  (3) Import (drag & drop) "QvPen_AvatarFollowSystem.unitypackage" into your project.
+
+  (4) Drag & drop the prefab asset "QvPen_AvatarFollowSystem.prefab" into the Hierarchy.
+      * Place exactly 1 instance in the scene and keep it always active (do not disable it at runtime).
+      * It can be placed anywhere (near the origin is recommended).
+
+  (5) That's all. At runtime it automatically detects objects generated by QVPen and works.
+      No changes to QVPen settings and no manual reference assignment are required.
+
+  (6) Build / upload your world.
+
+
+─────────────────────────────────────────────────────────────────
+ 3. Inspector Settings (In principle, you do not need to change the defaults)
+─────────────────────────────────────────────────────────────────
+  * Attach Distance              (default 0.2)
+      The "default reach": a line whose drawing finishes within this distance (m) from a bone becomes a target for attaching.
+      The larger the value, the more easily lines attach.
+
+  * Include Local Player         (default ON)
+      Whether the bones of the drawer themselves (you) are also included as attach targets.
+
+  * Max Records                  (default 511)
+      The maximum number of lines that can be attached at the same time. When exceeded, the oldest ones are automatically detached.
+      Increasing it increases synchronization bandwidth (72 bytes per line). Please adjust as needed.
+      * Because of VRChat's synchronization limit (about 49KB), roughly 680 lines is the practical maximum. If the limit is exceeded, the oldest records are automatically thinned out so that synchronization can continue.
+
+
+─────────────────────────────────────────────────────────────────
+ 4. Limitations
+─────────────────────────────────────────────────────────────────
+  - Only "humanoid bones" can be followed.
+  - Non-humanoid avatars, and clothes / hair / tails / accessories, etc. cannot be followed (because of VRChat's specifications, the avatar's mesh and additional bones cannot be obtained).
+  - If you draw while an avatar is moving or rotating at high speed, the line may be attached slightly offset from the avatar, by the amount the avatar moved before the synchronization reached each client.
+
+
+─────────────────────────────────────────────────────────────────
+Contact : [https://okumanecco.booth.pm/] [https://twitter.com/Okumanecco]
 =====================================================================

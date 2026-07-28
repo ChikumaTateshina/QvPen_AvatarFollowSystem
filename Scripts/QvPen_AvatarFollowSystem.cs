@@ -20,14 +20,17 @@ public class QvPen_AvatarFollowSystem : UdonSharpBehaviour
              "特定ボーンだけ変えたい場合は下の Bone Reach Override で上書きできる")]
     [SerializeField] private float attachDistance = 0.6f;
 
-    [Tooltip("ローカルプレイヤー(描いた本人)のボーンも対象に含めるか。\n通常は OFF 推奨(ペンを持つ手に貼り付くのを防ぐ)。\n※Play mode 単体で動作確認したいときは一時的に ON にする")]
-    [SerializeField] private bool includeLocalPlayer = false;
+    [Tooltip("ローカルプレイヤー(描いた本人)のボーンも対象に含めるか。\n" +
+             "既定は ON。自分のアバターに描いた線もその場で追従する。\n" +
+             "※ペンを持つ手に線が貼り付くのが気になる場合は OFF にする")]
+    [SerializeField] private bool includeLocalPlayer = true;
 
-    [Tooltip("同時に追従できる最大本数。超えると古いものから自動的に切り離す。\n大きくすると同期帯域が増える(1本あたり 72byte)")]
-    [SerializeField] private int maxRecords = 64;
+    [Tooltip("同時に追従できる最大本数。超えると古いものから自動的に切り離す。\n" +
+             "大きくすると同期帯域が増える(1本あたり 72byte)。\n" +
+             "VRChat の同期上限(約 49KB)に収まるよう 680 本程度までを目安とする")]
+    [SerializeField] private int maxRecords = 511;
 
-    [Tooltip("追従対象ボーンの HumanBodyBones 整数値リスト。空なら主要20ボーンを自動設定。\n" +
-             "例: 0=Hips, 8=Chest, 10=Head, 17=LeftHand, 18=RightHand(対応表は README 参照)")]
+    [Tooltip("追従対象ボーンの HumanBodyBones 整数値リスト。空なら主要20ボーンを自動設定。")]
     [SerializeField] private int[] candidateBoneIds;
 
     [Header("ボーン別の追従開始距離(リーチ)上書き")]
@@ -50,6 +53,10 @@ public class QvPen_AvatarFollowSystem : UdonSharpBehaviour
 
     private const string INK_POOL_ROOT_NAME = "QvPen_Objects";
     private const int RECORD_STRIDE = 6;
+
+    // 同期(RequestSerialization)が失敗したときの再送設定
+    private const int MAX_SERIALIZATION_RETRIES = 3;
+    private const float RETRY_DELAY_SECONDS = 0.5f;
 
     #endregion
 
@@ -86,6 +93,9 @@ public class QvPen_AvatarFollowSystem : UdonSharpBehaviour
     private readonly DataList pruneBuf = new DataList();
 
     private int ownerPruneTimer = 0;
+
+    private int serializationRetryCount = 0;
+    private bool retryScheduled = false;
 
     #endregion
 
@@ -258,6 +268,45 @@ public class QvPen_AvatarFollowSystem : UdonSharpBehaviour
     public override void OnDeserialization()
     {
         ParseRecords();
+    }
+
+    public override void OnPostSerialization(VRC.Udon.Common.SerializationResult result)
+    {
+        if (result.success)
+        {
+            serializationRetryCount = 0;
+
+            if (debugLog)
+                Debug.Log("[QvPen_AvatarFollowSystem] serialized " + result.byteCount
+                    + " bytes (" + rCount + " records)");
+            return;
+        }
+
+        // 送信失敗。オーナーでなくなっていれば新オーナーが送り直すので再送しない
+        if (!Networking.IsOwner(gameObject))
+        {
+            serializationRetryCount = 0;
+            return;
+        }
+
+        serializationRetryCount++;
+
+        // 規定回数を超えて失敗が続く場合はデータ量超過とみなし、古い記録を間引く
+        if (serializationRetryCount > MAX_SERIALIZATION_RETRIES)
+        {
+            serializationRetryCount = 0;
+            if (!TrimOldestRecords())
+                return;
+        }
+
+        if (retryScheduled)
+            return;
+
+        // 間引き直後は serializationRetryCount が 0 に戻っているため下限を 1 にする
+        var attempt = serializationRetryCount < 1 ? 1 : serializationRetryCount;
+
+        retryScheduled = true;
+        SendCustomEventDelayedSeconds(nameof(_RetrySerialization), RETRY_DELAY_SECONDS * attempt);
     }
 
     public override void OnPlayerLeft(VRCPlayerApi player)
@@ -474,7 +523,7 @@ public class QvPen_AvatarFollowSystem : UdonSharpBehaviour
 
         _syncedRecords = arr;
         ParseRecords();
-        RequestSerialization();
+        RequestSync();
     }
 
     private void OwnerPruneStale()
@@ -539,7 +588,7 @@ public class QvPen_AvatarFollowSystem : UdonSharpBehaviour
         ParseRecords();
 
         if (Networking.IsOwner(gameObject))
-            RequestSerialization();
+            RequestSync();
     }
 
     private void ParseRecords()
@@ -613,6 +662,68 @@ public class QvPen_AvatarFollowSystem : UdonSharpBehaviour
 
     #endregion
 
+    #region Sync stability
+
+    /// <summary>
+    /// オーナーとして同期を要求する。再送カウンタをリセットしてから発行する。
+    /// </summary>
+    private void RequestSync()
+    {
+        serializationRetryCount = 0;
+        RequestSerialization();
+    }
+
+    /// <summary>
+    /// OnPostSerialization から遅延実行される再送処理。
+    /// </summary>
+    public void _RetrySerialization()
+    {
+        retryScheduled = false;
+
+        if (!Networking.IsOwner(gameObject))
+        {
+            serializationRetryCount = 0;
+            return;
+        }
+
+        RequestSerialization();
+    }
+
+    /// <summary>
+    /// 送信失敗が続く場合に、古い記録から 1/4(最低 1 本)を切り離してデータ量を減らす。
+    /// これ以上減らせない場合は false を返す。
+    /// </summary>
+    private bool TrimOldestRecords()
+    {
+        if (rCount == 0)
+            return false;
+
+        var drop = rCount / 4;
+        if (drop < 1)
+            drop = 1;
+
+        var keep = rCount - drop;
+        var arr = new Vector3[keep * RECORD_STRIDE];
+        var w = 0;
+        for (int i = drop; i < rCount; i++)
+        {
+            WriteRecord(arr, w, rPenId[i], rInkId[i], rPlayerId[i], rBone[i], rPos0[i], rRot0[i]);
+            w++;
+        }
+
+        _syncedRecords = arr;
+        ParseRecords();
+
+        if (debugLog)
+            Debug.LogWarning("[QvPen_AvatarFollowSystem] serialization keeps failing;"
+                + " dropped " + drop + " oldest record(s), " + keep + " remain."
+                + " Consider lowering Max Records.");
+
+        return true;
+    }
+
+    #endregion
+
     #region Public API
 
     public void _DetachAll()
@@ -622,7 +733,7 @@ public class QvPen_AvatarFollowSystem : UdonSharpBehaviour
 
         _syncedRecords = new Vector3[0];
         ParseRecords();
-        RequestSerialization();
+        RequestSync();
     }
 
     #endregion

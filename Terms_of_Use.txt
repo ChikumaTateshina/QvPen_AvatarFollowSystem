@@ -4,67 +4,210 @@
  制作者　 : 蓼科 千曲 / TATESHINA Chikuma
  連絡先　 : Booth : https://okumanecco.booth.pm/
 　　　　  : Twitter : https://twitter.com/Okumanecco
- 配布元　 : [https://okumanecco.booth.pm/items/8566107]
- 最終更新 : [2026/07/01]
+ 配布元　 : Booth  : [https://okumanecco.booth.pm/items/8566107]
+　　　　  : GitHub : [https://github.com/ChikumaTateshina/QvPen_AvatarFollowSystem]
+ 最終更新 : [2026/07/28]
 ---------------------------------------------------------------------
 
-本製品「QvPen Avatar Follow System」(以下「本製品」)をご利用いただく前に、
-本利用規約(以下「本規約」)を必ずお読みください。
-本製品をダウンロード・導入・使用した時点で、本規約に同意したものとみなします。
+本製品「QvPen Avatar Follow System」(以下「本製品」)をご利用いただく前に，本利用規約(以下「本規約」)を必ずお読みください．
+本製品をダウンロード・導入・使用した時点で，本規約に同意したものとみなします．
 
 
 ■ 概要
-  本製品は、VRChat ワールド向けの QVPen 拡張ギミックです。
-  アバターの近くで QVPen を使って描いた線(文字など)を、そのアバターの最寄りのボーンに追従させ、全プレイヤーへ同期します。
+  本製品は，VRChat ワールド向けの QVPen 拡張ギミックです．
+  アバターの近くで QVPen を使って描いた線(文字など)を，そのアバターの最寄りのボーンに追従させ，全プレイヤーへ同期します．
 
 
 ■ 動作環境
   ・VRChat SDK3 - Worlds
   ・UdonSharp
   ・QVPen ※ユーザでの導入が必要です
-  （本製品に QVPen 本体は含まれません。）
-  導入手順は「導入方法.txt」を参照してください。
+  （本製品に QVPen 本体は含まれません．）
+  導入手順は「Setup_Guide.txt(導入方法)」を参照してください．
 
 
-■ 許諾範囲(できること)
-  ・利用者自身が制作する VRChat ワールドへ組み込んで使用すること。(個人 / 商用、入場無料 / 有料を問いません)
-  ・利用者自身の利用の範囲で、本製品のスクリプトを改変して使用すること。
-  ・ワールドへアップロードした成果物(ビルド)に、本製品が含まれること。
+■ 正規の配布元
+  以下を本製品の正規の配布元とします．これ以外での配布は認められません．
+  ・Booth  : https://okumanecco.booth.pm/items/8566107
+  ・GitHub : https://github.com/ChikumaTateshina/QvPen_AvatarFollowSystem
+    (以下「正規リポジトリ」といいます)
+
+
+■ 許諾範囲
+  ・利用者自身が制作する VRChat ワールドへ組み込んで使用すること．(個人 / 商用，入場無料 / 有料を問いません)
+  ・利用者自身の利用の範囲で，本製品のスクリプトを改変して使用すること．
+  ・ワールドへアップロードした成果物(ビルド)に，本製品が含まれること．
+  ・正規リポジトリの閲覧・clone・fork，および fork 上での改変物の公開・再配布．
+    (条件は下記「■ GitHub 経由の閲覧・fork・改変再配布に関する特則」のとおり)
+
+
+■ GitHub 経由の閲覧・fork・改変再配布に関する特則
+  本製品は，正規リポジトリにおいてソースコードを公開しています．
+  GitHub の利用規約に基づき，かつ「■ 禁止事項」の例外として，以下を明示的に許諾します．
+
+  (1) 閲覧
+      何人も，正規リポジトリのソースコードを自由に閲覧できます．
+
+  (2) clone / fork
+      何人も，正規リポジトリを clone および fork できます．
+      fork によって生じる複製物の GitHub 上での公開は，再配布の禁止に違反しません．
+
+  (3) 改変物の公開・再配布
+      正規リポジトリを fork したうえで本製品を改変し，これを公開・再配布できます．
+      ただし，次の条件をすべて満たしてください．
+        (a) 原著作者(蓼科 千曲)のクレジット表示と，本規約の写しまたは本規約へのリンクを保持すること．
+        (b) 原作からの改変物であることを明示すること．
+        (c) 無償で公開すること(改変物を有償で販売しないこと)．
+        (d) 本製品または改変物を，本製品と同種・競合する素材として Booth 等のマーケットプレイスで販売・再販しないこと．
+
+  ※ 本特則が適用されるのは，正規リポジトリを起点とする GitHub 上での行為に限られます．
+     Booth で頒布したファイル一式(unitypackage / zip)そのものの再配布は，引き続き「■ 禁止事項」のとおり禁止します．
 
 
 ■ 禁止事項
-  ・本製品のファイル(スクリプト等)そのもの、またはその改変物を、第三者へ再配布・公開・販売・譲渡・貸与すること(無償・有償を問わず)。
-  ・本製品を、本製品と同種・競合する素材として再販・再公開すること。
-  ・本製品の正規の配布元(購入ページ等)以外での配布。
-  ・本規約および著作権・クレジット表示の削除または改変。
-  ・法令または公序良俗に反する利用。
+  ※ 以下の各号は，上記「■ GitHub 経由の閲覧・fork・改変再配布に関する特則」で許諾した範囲には適用されません．
+
+  ・本製品のファイル(スクリプト等)そのもの，またはその改変物を，第三者へ再配布・公開・販売・譲渡・貸与すること(無償・有償を問わず)．
+  ・本製品を，本製品と同種・競合する素材として再販・再公開すること．
+  ・本製品の正規の配布元(上記「■ 正規の配布元」に掲げるもの)以外での配布．
+  ・本規約および著作権・クレジット表示の削除または改変．
+  ・法令または公序良俗に反する利用．
 
 
 ■ 著作権
-  本製品の著作権は制作者に帰属します。購入・入手によって利用者へ移転するのは
-  本規約に基づく利用権のみであり、著作権その他の権利は移転しません。
+  本製品の著作権は制作者に帰属します．購入・入手によって利用者へ移転するのは本規約に基づく利用権のみであり，著作権その他の権利は移転しません．
 
 
 ■ 第三者ソフトウェア / クレジット
   ・QVPen (作者: ureishi 氏)
-    本製品は QVPen の拡張です。QVPen 本体は別途、利用者ご自身の責任で入手・利用してください(QVPen の利用規約に従ってください)。
+    本製品は QVPen の拡張です．QVPen 本体は別途，利用者ご自身の責任で入手・利用してください(QVPen の利用規約に従ってください)．
 
 
 ■ 免責事項
-  ・本製品は現状有姿(AS IS)で提供されます。動作の完全性、特定目的への適合性、無謬性を保証しません。
-  ・本製品の使用または使用不能によって生じたいかなる損害についても、制作者は一切の責任を負いません。
-  ・VRChat / Unity / UdonSharp / QVPen 等の仕様変更により、本製品が正常に動作しなくなる場合があります。
+  ・本製品は現状有姿(AS IS)で提供されます．動作の完全性，特定目的への適合性，無謬性を保証しません．
+  ・本製品の使用または使用不能によって生じたいかなる損害についても，制作者は一切の責任を負いません．
+  ・VRChat / Unity / UdonSharp / QVPen 等の仕様変更により，本製品が正常に動作しなくなる場合があります．
 
 
 ■ サポート
-  サポートの有無および範囲は制作者の裁量によります。
-  お問い合わせは上記連絡先までお願いします。
+  サポートの有無および範囲は制作者の裁量によります．
+  お問い合わせは上記連絡先までお願いします．
 
 
 ■ 規約の変更
-  本規約は予告なく変更される場合があります。変更後の規約は、配布元等で公開された時点で効力を生じます。
+  本規約は予告なく変更される場合があります．変更後の規約は，配布元等で公開された時点で効力を生じます．
 
 
 =====================================================================
  © [2026] [蓼科千曲]   All rights reserved.
+=====================================================================
+
+
+#####################################################################
+#  English  (Translation)                                           #
+#####################################################################
+
+=====================================================================
+ QvPen Avatar Follow System  Terms of Use
+=====================================================================
+ Author       : 蓼科 千曲 / TATESHINA Chikuma
+ Contact      : Booth : https://okumanecco.booth.pm/
+                Twitter : https://twitter.com/Okumanecco
+ Distribution : Booth  : [https://okumanecco.booth.pm/items/8566107]
+                GitHub : [https://github.com/ChikumaTateshina/QvPen_AvatarFollowSystem]
+ Last updated : [2026/07/28]
+---------------------------------------------------------------------
+
+Before using this product "QvPen Avatar Follow System" (hereinafter "this Product"), please be sure to read these Terms of Use (hereinafter "these Terms").
+By downloading, installing, or using this Product, you are deemed to have agreed to these Terms.
+
+
+* Overview
+  This Product is a QVPen extension gimmick for VRChat worlds.
+  It makes lines (letters, etc.) drawn with QVPen near an avatar attach to the nearest bone of that avatar, and synchronizes them to all players.
+
+
+* Operating Environment
+  - VRChat SDK3 - Worlds
+  - UdonSharp
+  - QVPen  * must be installed by the user
+  (QVPen itself is not included in this Product.)
+  For installation steps, please refer to "Setup_Guide.txt".
+
+
+* Official Distribution Sources
+  The following are the official distribution sources of this Product. Distribution anywhere else is not permitted.
+  - Booth  : https://okumanecco.booth.pm/items/8566107
+  - GitHub : https://github.com/ChikumaTateshina/QvPen_AvatarFollowSystem
+    (hereinafter the "Official Repository")
+
+
+* Scope of Permission (What you may do)
+  - Use it by incorporating it into VRChat worlds that you create yourself. (Personal / commercial, free / paid entry are all allowed.)
+  - Modify the scripts of this Product and use them, within the scope of your own use.
+  - Include this Product in the deliverable (build) uploaded to a world.
+  - View, clone, and fork the Official Repository, and publish / redistribute modified versions from your fork.
+    (For the conditions, see "Special Provisions for Viewing, Forking, and Redistributing Modified Versions via GitHub" below.)
+
+
+* Special Provisions for Viewing, Forking, and Redistributing Modified Versions via GitHub
+  The source code of this Product is published in the Official Repository.
+  In accordance with GitHub's Terms of Service, and as an exception to "Prohibited Acts" below, the following are expressly permitted.
+
+  (1) Viewing
+      Anyone may freely view the source code of the Official Repository.
+
+  (2) Cloning / Forking
+      Anyone may clone and fork the Official Repository.
+      Publishing on GitHub the copies that result from forking does not violate the prohibition on redistribution.
+
+  (3) Publishing / redistributing modified versions
+      You may fork the Official Repository, modify this Product, and publish or redistribute the result, provided that all of the following conditions are met.
+        (a) Retain the credit to the original author (蓼科 千曲 / TATESHINA Chikuma) and a copy of, or a link to, these Terms.
+        (b) Clearly state that it is a modified version of the original.
+        (c) Publish it free of charge (do not sell modified versions for a fee).
+        (d) Do not sell or resell this Product or a modified version on Booth or any other marketplace as material of the same kind as, or competing with, this Product.
+
+  * These Special Provisions apply only to activity on GitHub originating from the Official Repository.
+    Redistributing the distributed file set itself (unitypackage / zip) obtained from Booth remains prohibited as stated in "Prohibited Acts" below.
+
+
+* Prohibited Acts
+  * The following items do not apply to what is permitted under "Special Provisions for Viewing, Forking, and Redistributing Modified Versions via GitHub" above.
+
+  - Redistributing, publishing, selling, transferring, or lending the files of this Product (scripts, etc.) themselves, or modified versions of them, to third parties (whether free of charge or for a fee).
+  - Reselling or republishing this Product as material of the same kind as, or competing with, this Product.
+  - Distribution anywhere other than the official distribution sources of this Product (those listed under "Official Distribution Sources" above).
+  - Deleting or altering these Terms, the copyright notice, or the credit notice.
+  - Any use that violates laws and regulations or public order and morals.
+
+
+* Copyright
+  The copyright of this Product belongs to the author. What is transferred to the user by purchase or acquisition is only the right of use based on these Terms; copyright and other rights are not transferred.
+
+
+* Third-Party Software / Credits
+  - QVPen (author: ureishi)
+    This Product is an extension of QVPen. Please obtain and use QVPen itself separately, at your own responsibility (and in accordance with QVPen's terms of use).
+
+
+* Disclaimer
+  - This Product is provided "AS IS". Completeness of operation, fitness for a particular purpose, and freedom from errors are not guaranteed.
+  - The author bears no responsibility whatsoever for any damages arising from the use of, or inability to use, this Product.
+  - Due to specification changes in VRChat / Unity / UdonSharp / QVPen, etc., this Product may cease to work correctly.
+
+
+* Support
+  Whether support is provided, and its scope, are at the author's discretion.
+  For inquiries, please use the contact information above.
+
+
+* Changes to These Terms
+  These Terms may be changed without prior notice. The revised Terms take effect at the time they are published at the distribution source, etc.
+
+
+=====================================================================
+ © [2026] [蓼科千曲]   All rights reserved.
+
+ * This English text is a reference translation. In the event of any discrepancy, the Japanese original shall prevail.
 =====================================================================
