@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ja" data-lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QvPen Avatar Follow System — QvPen の線をアバターに追従させる</title>
+<meta name="description" content="QvPen で描いた線をアバターのボーンに追従させる VRChat ワールド用ギミック。VCC への追加ボタン、導入方法、設定項目を掲載しています。">
+<meta property="og:title" content="QvPen Avatar Follow System">
+<meta property="og:description" content="QvPen で描いた線をアバターに追従させる VRChat ワールド用ギミック。VCC からワンクリックで追加できます。">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230f8a7a'/%3E%3Cpath d='M8 22c4-9 7 3 10-5s4-5 6-6' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+:root {
+  color-scheme: light dark;
+  --fg: #14171a;
+  --bg: #ffffff;
+  --panel: #f5f7f7;
+  --muted: #5a6470;
+  --line: #dde3e4;
+  --accent: #0b7d6f;
+  --accent-fg: #ffffff;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fg: #e9ecec;
+    --bg: #121617;
+    --panel: #1a2021;
+    --muted: #9aa5a8;
+    --line: #2b3436;
+    --accent: #4fd1bd;
+    --accent-fg: #06201c;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+html[data-lang="ja"] [lang="en"],
+html[data-lang="en"] [lang="ja"] { display: none; }
+body {
+  margin: 0;
+  padding: 1.25rem 1rem 4rem;
+  background: var(--bg);
+  color: var(--fg);
+  font: 16px/1.75 -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans",
+    "Noto Sans JP", Meiryo, sans-serif;
+}
+main { max-width: 46rem; margin: 0 auto; }
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+p { margin: 0 0 1rem; }
+h1 { font-size: clamp(1.7rem, 5.5vw, 2.3rem); line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.01em; }
+h2 { font-size: 1.2rem; margin: 3rem 0 .9rem; padding-bottom: .4rem; border-bottom: 1px solid var(--line); }
+h3 { font-size: 1rem; margin: 1.5rem 0 .4rem; }
+section[id] { scroll-margin-top: 1rem; }
+code, input { font-family: ui-monospace, SFMono-Regular, "Cascadia Mono", Menlo, Consolas, monospace; }
+code { font-size: .88em; background: var(--panel); padding: .1em .35em; border-radius: 4px; overflow-wrap: anywhere; }
+
+.topbar { display: flex; justify-content: flex-end; margin-bottom: 2rem; }
+.lang { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.lang button {
+  font: inherit; font-size: .8rem; padding: .25rem .8rem; border: 0; cursor: pointer;
+  background: transparent; color: var(--muted);
+}
+.lang button[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); }
+
+.tagline { color: var(--muted); font-size: 1.05rem; margin: 0 0 1.5rem; }
+.page-nav { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; font-size: .9rem; margin-top: 1.5rem; }
+
+.demo { display: block; width: 100%; height: auto; margin-top: 1.5rem; border-radius: 12px; border: 1px solid var(--line); background: #000; }
+.install { margin-top: 1.75rem; padding: 1.25rem; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+.button {
+  display: inline-block; font: inherit; font-weight: 700; text-decoration: none; cursor: pointer;
+  padding: .75rem 1.4rem; border-radius: 10px; border: 1px solid var(--accent);
+  background: var(--accent); color: var(--accent-fg);
+}
+.button:hover { filter: brightness(1.08); }
+.button.ghost { background: transparent; color: var(--accent); font-weight: 600; padding: .5rem .9rem; }
+.install .hint { color: var(--muted); font-size: .88rem; margin: .9rem 0 .4rem; }
+.copy-row { display: flex; gap: .5rem; }
+.copy-row input {
+  flex: 1; min-width: 0; font-size: .82rem; padding: .5rem .65rem; border-radius: 8px;
+  border: 1px solid var(--line); background: var(--bg); color: var(--fg);
+}
+.copy-row .button { white-space: nowrap; }
+
+.features { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; padding: 0; margin: 0; list-style: none; }
+.features li { padding: 1rem; border: 1px solid var(--line); border-radius: 10px; }
+.features strong { display: block; margin-bottom: .25rem; }
+.features span { color: var(--muted); font-size: .9rem; line-height: 1.6; display: block; }
+
+.steps { padding-left: 1.5rem; margin: 0 0 1rem; }
+.steps li { margin-bottom: .8rem; padding-left: .25rem; }
+.steps li::marker { color: var(--accent); font-weight: 700; }
+ul.plain { padding-left: 1.25rem; margin: 0 0 1rem; }
+ul.plain li { margin-bottom: .4rem; }
+.note { border-left: 3px solid var(--accent); background: var(--panel); padding: .75rem 1rem; font-size: .92rem; margin: 0 0 1rem; }
+.note p:last-child { margin-bottom: 0; }
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+th, td { text-align: left; vertical-align: top; padding: .6rem .75rem; border-bottom: 1px solid var(--line); }
+th { color: var(--muted); font-weight: 600; white-space: nowrap; }
+td:first-child { white-space: nowrap; font-weight: 600; }
+
+footer { margin-top: 3.5rem; padding-top: 1.25rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .88rem; }
+footer ul { list-style: none; padding: 0; margin: 0 0 1rem; display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; }
+
+@media (max-width: 600px) {
+  .features { grid-template-columns: 1fr; }
+  .copy-row { flex-direction: column; }
+  td:first-child { white-space: normal; }
+}
+</style>
+</head>
+<body>
+<main>
+  <div class="topbar">
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-set-lang="ja" aria-pressed="true">日本語</button>
+      <button type="button" data-set-lang="en" aria-pressed="false">English</button>
+    </div>
+  </div>
+
+  <header>
+    <h1>QvPen Avatar Follow System</h1>
+    <p class="tagline" lang="ja">QvPen で描いた線が，アバターについてくる．</p>
+    <p class="tagline" lang="en">Lines drawn with QvPen follow the avatar.</p>
+
+    <p lang="ja">VRChat ワールド向けの <a href="https://github.com/ureishi/QvPen">QvPen</a> 拡張ギミックです．アバターの近くで描いた線(文字や落書き)を，そのアバターの最寄りのボーンに追従させ，全プレイヤーへ同期します．Prefab を 1 個置くだけで動作します．</p>
+    <p lang="en">A <a href="https://github.com/ureishi/QvPen">QvPen</a> extension for VRChat worlds. Lines (writing, doodles) drawn near an avatar attach to that avatar's nearest bone and are synced to all players. Just place one prefab in your scene.</p>
+
+    <video class="demo" controls muted playsinline preload="none" poster="demo-poster.jpg" width="1280" height="720">
+      <source src="demo.mp4" type="video/mp4">
+    </video>
+
+    <div class="install" id="vcc">
+      <a class="button" id="add-button" href="vcc://vpm/addRepo?url=https%3A%2F%2Fchikumatateshina.github.io%2FQvPen_AvatarFollowSystem%2Findex.json">
+        <span lang="ja">VCC に追加</span><span lang="en">Add to VCC</span>
+      </a>
+      <p class="hint" lang="ja">ボタンが反応しない場合は，以下の URL を VCC / ALCOM の「Add Repository」に貼り付けてください．</p>
+      <p class="hint" lang="en">If the button does nothing, paste this URL into "Add Repository" in VCC / ALCOM.</p>
+      <div class="copy-row">
+        <input id="repo-url" type="text" readonly aria-label="VPM repository URL"
+               value="https://chikumatateshina.github.io/QvPen_AvatarFollowSystem/index.json">
+        <button class="button ghost" type="button" id="copy-button">
+          <span lang="ja">コピー</span><span lang="en">Copy</span>
+        </button>
+      </div>
+    </div>
+
+    <nav class="page-nav">
+      <a href="#features"><span lang="ja">特徴</span><span lang="en">Features</span></a>
+      <a href="#install"><span lang="ja">導入方法</span><span lang="en">Installation</span></a>
+      <a href="#settings"><span lang="ja">設定項目</span><span lang="en">Settings</span></a>
+      <a href="#limitations"><span lang="ja">制限事項</span><span lang="en">Limitations</span></a>
+      <a href="https://vrchat.com/home/launch?worldId=wrld_4d1f9a3b-ee61-475e-8769-bffc2bbb6ae3"><span lang="ja">サンプルワールド</span><span lang="en">Sample world</span></a>
+    </nav>
+  </header>
+
+  <section id="features">
+    <h2><span lang="ja">特徴</span><span lang="en">Features</span></h2>
+    <ul class="features">
+      <li>
+        <strong lang="ja">アバターに追従</strong>
+        <span lang="ja">ボーンの近くで描き終えた線が，そのボーンと一緒に動きます．顔や腕への落書き，背中へのメッセージなどに．</span>
+        <strong lang="en">Follows avatars</strong>
+        <span lang="en">A line finished near a bone moves with that bone. Doodle on faces and arms, or leave a message on someone's back.</span>
+      </li>
+      <li>
+        <strong lang="ja">全員に同期</strong>
+        <span lang="ja">追従の状態は全プレイヤーへ同期され，後から入ってきた人にも同じように見えます．</span>
+        <strong lang="en">Synced for everyone</strong>
+        <span lang="en">The attachment is synced to all players, including those who join later.</span>
+      </li>
+      <li>
+        <strong lang="ja">置くだけで動作</strong>
+        <span lang="ja">QvPen の生成物を実行時に自動検出します．QvPen 側の設定変更や参照の割り当ては不要です．</span>
+        <strong lang="en">Drop-in</strong>
+        <span lang="en">QvPen's objects are detected at runtime. No changes to QvPen and no references to assign.</span>
+      </li>
+    </ul>
+    <p style="margin-top:1rem" lang="ja">導入前に <a href="https://vrchat.com/home/launch?worldId=wrld_4d1f9a3b-ee61-475e-8769-bffc2bbb6ae3">サンプルワールド</a> で実際の動作を試せます．</p>
+    <p style="margin-top:1rem" lang="en">You can try it in the <a href="https://vrchat.com/home/launch?worldId=wrld_4d1f9a3b-ee61-475e-8769-bffc2bbb6ae3">sample world</a> before installing.</p>
+  </section>
+
+  <section id="install">
+    <h2><span lang="ja">導入方法</span><span lang="en">Installation</span></h2>
+
+    <h3><span lang="ja">必要なもの</span><span lang="en">Requirements</span></h3>
+    <ul class="plain" lang="ja">
+      <li>VRChat SDK - Worlds 3.5.0 以降 (Unity 2022.3)</li>
+      <li><a href="https://github.com/ureishi/QvPen">QvPen</a> — 本ギミックには含まれません．先にワールドへ導入しておいてください．</li>
+    </ul>
+    <ul class="plain" lang="en">
+      <li>VRChat SDK - Worlds 3.5.0 or later (Unity 2022.3)</li>
+      <li><a href="https://github.com/ureishi/QvPen">QvPen</a> — not included. Install it into your world first.</li>
+    </ul>
+
+    <h3><span lang="ja">VCC で導入する</span><span lang="en">Install with VCC</span></h3>
+    <ol class="steps" lang="ja">
+      <li>QvPen をワールドに導入し，ペンで描ける状態にしておきます．</li>
+      <li>上の <a href="#vcc">「VCC に追加」</a> ボタンを押し，開いた VCC で <strong>I Understand, Add Repository</strong> を選びます．</li>
+      <li>VCC でワールドのプロジェクトの <strong>Manage Project</strong> を開き，<strong>QvPen Avatar Follow System</strong> の「＋」を押して追加します．</li>
+      <li>Unity でプロジェクトを開き，<code>Packages/QvPen Avatar Follow System/Prefab</code> にある <code>QvPen_AvatarFollowSystem.prefab</code> を Hierarchy にドラッグ&amp;ドロップします．</li>
+      <li>ワールドをビルド / アップロードします．</li>
+    </ol>
+    <ol class="steps" lang="en">
+      <li>Install QvPen into your world and make sure you can draw with a pen.</li>
+      <li>Press <a href="#vcc">"Add to VCC"</a> above, and choose <strong>I Understand, Add Repository</strong> in VCC.</li>
+      <li>In VCC, open <strong>Manage Project</strong> for your world project and press "+" next to <strong>QvPen Avatar Follow System</strong>.</li>
+      <li>Open the project in Unity and drag <code>QvPen_AvatarFollowSystem.prefab</code> from <code>Packages/QvPen Avatar Follow System/Prefab</code> into the Hierarchy.</li>
+      <li>Build / upload your world.</li>
+    </ol>
+    <div class="note" lang="ja">
+      <p>Prefab はシーンに <strong>1 個だけ</strong> 配置し，常に有効にしておいてください(実行中に無効化しない)．配置場所はどこでも構いません．</p>
+    </div>
+    <div class="note" lang="en">
+      <p>Place <strong>exactly one</strong> instance in the scene and keep it active at all times. It can be placed anywhere.</p>
+    </div>
+
+    <h3><span lang="ja">Booth 版(unitypackage)から移行する</span><span lang="en">Migrating from the Booth unitypackage</span></h3>
+    <p lang="ja">VCC から追加すると，unitypackage で導入した <code>Assets/TateshinaSystems/QvPen_AvatarFollowSystem</code> フォルダは自動で削除され，パッケージ版に置き換わります．シーンに配置済みの Prefab と設定値はそのまま引き継がれます．スクリプトを改変している場合は，事前にバックアップを取ってください．</p>
+    <p lang="en">Adding the package through VCC removes the <code>Assets/TateshinaSystems/QvPen_AvatarFollowSystem</code> folder imported from the unitypackage and replaces it with the package. Prefabs already placed in your scenes keep working with their settings. If you modified the script, back it up first.</p>
+
+    <h3><span lang="ja">VCC を使わずに導入する</span><span lang="en">Installing without VCC</span></h3>
+    <p lang="ja"><a href="https://okumanecco.booth.pm/items/8566107">Booth</a> から unitypackage を入手し，プロジェクトへインポートしてください．以降の手順は同じです．</p>
+    <p lang="en">Get the unitypackage from <a href="https://okumanecco.booth.pm/items/8566107">Booth</a> and import it into your project. The remaining steps are the same.</p>
+  </section>
+
+  <section id="settings">
+    <h2><span lang="ja">設定項目</span><span lang="en">Settings</span></h2>
+    <p lang="ja">原則，初期設定のまま変更する必要はありません．</p>
+    <p lang="en">The defaults work for most worlds.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th><span lang="ja">項目</span><span lang="en">Field</span></th>
+            <th><span lang="ja">既定値</span><span lang="en">Default</span></th>
+            <th><span lang="ja">説明</span><span lang="en">Description</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Attach Distance</td>
+            <td>0.2</td>
+            <td>
+              <span lang="ja">ボーンからこの距離(m)以内に描き終えた線が追従対象になります．大きいほど付きやすくなります．</span>
+              <span lang="en">A line finished within this distance (m) of a bone attaches to it. Larger values attach more easily.</span>
+            </td>
+          </tr>
+          <tr>
+            <td>Include Local Player</td>
+            <td>ON</td>
+            <td>
+              <span lang="ja">描いた本人のボーンも追従対象に含めるかどうか．</span>
+              <span lang="en">Whether the drawer's own bones are also attach targets.</span>
+            </td>
+          </tr>
+          <tr>
+            <td>Max Records</td>
+            <td>511</td>
+            <td>
+              <span lang="ja">同時に追従できる最大本数．超えると古いものから切り離します．1 本あたり 72 byte の同期帯域を使うため，VRChat の同期上限(約 49KB)に収まる 680 本程度までが目安です．</span>
+              <span lang="en">Maximum number of lines attached at once; the oldest are detached beyond it. Each line uses 72 bytes of sync data, so about 680 is the practical maximum under VRChat's sync limit (about 49 KB).</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="limitations">
+    <h2><span lang="ja">制限事項</span><span lang="en">Limitations</span></h2>
+    <ul class="plain" lang="ja">
+      <li>追従できるのはヒューマノイドのボーンのみです．</li>
+      <li>非ヒューマノイドアバターや，服・髪・しっぽ・装飾などには追従できません(VRChat の仕様上，ワールドからはアバターのメッシュや追加ボーンを取得できないため)．</li>
+      <li>アバターが高速で移動・回転している最中に描くと，同期が各クライアントへ届くまでの移動ぶん，線が少しずれて貼り付く場合があります．</li>
+    </ul>
+    <ul class="plain" lang="en">
+      <li>Only humanoid bones can be followed.</li>
+      <li>Non-humanoid avatars, and clothes, hair, tails or accessories cannot be followed (a world cannot access an avatar's mesh or additional bones).</li>
+      <li>If you draw while an avatar is moving or turning quickly, the line may attach slightly offset, by the distance the avatar moved before the sync reached each client.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <ul>
+      <li><a href="https://github.com/ChikumaTateshina/QvPen_AvatarFollowSystem">GitHub</a></li>
+      <li><a href="https://okumanecco.booth.pm/items/8566107">Booth</a></li>
+      <li><a href="https://github.com/ChikumaTateshina/QvPen_AvatarFollowSystem/blob/main/Terms_of_Use.txt"><span lang="ja">利用規約</span><span lang="en">Terms of Use</span></a></li>
+      <li><a href="https://twitter.com/Okumanecco">Twitter</a></li>
+    </ul>
+    <p lang="ja">本ギミックは ureishi 氏の <a href="https://github.com/ureishi/QvPen">QvPen</a> の拡張です．素晴らしいソフトウェアを公開してくださっている ureishi 氏に感謝します．</p>
+    <p lang="en">This is an extension for <a href="https://github.com/ureishi/QvPen">QvPen</a> by ureishi, to whom I am grateful for making such excellent software available.</p>
+    <p>© 2026 蓼科 千曲 / TATESHINA Chikuma</p>
+  </footer>
+</main>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var buttons = document.querySelectorAll('[data-set-lang]');
+
+  function setLang(lang) {
+    root.setAttribute('data-lang', lang);
+    root.setAttribute('lang', lang);
+    buttons.forEach(function (button) {
+      button.setAttribute('aria-pressed', String(button.getAttribute('data-set-lang') === lang));
+    });
+  }
+
+  var saved = null;
+  try { saved = localStorage.getItem('lang'); } catch (e) {}
+  var browser = (navigator.language || 'ja').toLowerCase().indexOf('ja') === 0 ? 'ja' : 'en';
+  setLang(saved === 'ja' || saved === 'en' ? saved : browser);
+
+  buttons.forEach(function (button) {
+    button.addEventListener('click', function () {
+      var lang = button.getAttribute('data-set-lang');
+      setLang(lang);
+      try { localStorage.setItem('lang', lang); } catch (e) {}
+    });
+  });
+
+  // Derived from where the page is served, so a fork's page points at its own listing.
+  var input = document.getElementById('repo-url');
+  if (location.protocol === 'https:') {
+    var listing = new URL('index.json', location.href).href;
+    input.value = listing;
+    document.getElementById('add-button').href = 'vcc://vpm/addRepo?url=' + encodeURIComponent(listing);
+  }
+
+  var copy = document.getElementById('copy-button');
+  copy.addEventListener('click', function () {
+    var done = function () {
+      var original = copy.innerHTML;
+      copy.textContent = '✓';
+      setTimeout(function () { copy.innerHTML = original; }, 1200);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(input.value).then(done, function () { input.select(); });
+    } else {
+      input.select();
+      document.execCommand('copy');
+      done();
+    }
+  });
+})();
+</script>
+</body>
+</html>

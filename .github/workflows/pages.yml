@@ -1,0 +1,75 @@
+# Publishes the web page and the VPM listing (index.json) to GitHub Pages.
+#
+# The listing is merged over whatever is already published, and a version is
+# listed only once its zip can actually be downloaded from a release. So a push
+# that bumps the version ahead of its release changes nothing.
+#
+# GitHub Pages must be set to deploy from GitHub Actions:
+# Settings -> Pages -> Build and deployment -> Source: GitHub Actions.
+name: Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Website~/**'
+      - 'package.json'
+      - '.github/scripts/build_vpm_listing.py'
+      - '.github/workflows/pages.yml'
+  # Runs after a release has attached its zip, so the new version becomes
+  # downloadable and therefore listable.
+  workflow_run:
+    workflows: ['Release']
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish the page and listing
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build the site
+        run: |
+          set -euo pipefail
+          owner=$(echo "${GITHUB_REPOSITORY%%/*}" | tr '[:upper:]' '[:lower:]')
+          name="${GITHUB_REPOSITORY##*/}"
+          published="https://${owner}.github.io/${name}/index.json"
+
+          if curl -fsSL --max-time 30 "$published" -o /tmp/published.json; then
+            existing=(--existing /tmp/published.json)
+          else
+            echo "::notice::Nothing is published yet; starting a fresh listing."
+            existing=()
+          fi
+
+          python .github/scripts/build_vpm_listing.py listing \
+            --repo "$GITHUB_REPOSITORY" \
+            --out site \
+            "${existing[@]}"
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - id: deploy
+        uses: actions/deploy-pages@v4

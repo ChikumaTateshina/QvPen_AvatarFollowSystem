@@ -1,0 +1,54 @@
+# Builds the package zip and attaches it to a GitHub release.
+#
+# Triggered by pushing a tag such as v1.0.0. The tag has to match the version in
+# package.json.
+#
+# It deliberately does not touch GitHub Pages. Pages is deployed only from the
+# default branch -- GitHub's protection rule on the github-pages environment
+# rejects a tag -- so the Pages workflow publishes the listing once this one has
+# made the zip downloadable. It runs automatically after this workflow completes.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  package:
+    name: Build the package zip
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Check that package.json carries the release version
+        run: |
+          set -euo pipefail
+          expected="${GITHUB_REF_NAME#v}"
+          actual=$(python -c "import json;print(json.load(open('package.json'))['version'])")
+          if [ "$actual" != "$expected" ]; then
+            echo "::error file=package.json::version is $actual but the tag is v$expected"
+            exit 1
+          fi
+
+      - name: Build the zip
+        run: python .github/scripts/build_vpm_listing.py zip --out dist
+
+      - name: Attach the zip to the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" dist/*.zip \
+            --title "QvPen Avatar Follow System ${GITHUB_REF_NAME#v}" \
+            --generate-notes \
+            || gh release upload "${GITHUB_REF_NAME}" dist/*.zip --clobber

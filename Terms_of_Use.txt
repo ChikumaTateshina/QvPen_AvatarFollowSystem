@@ -6,7 +6,8 @@
 　　　　  : Twitter : https://twitter.com/Okumanecco
  配布元　 : Booth  : [https://okumanecco.booth.pm/items/8566107]
 　　　　  : GitHub : [https://github.com/ChikumaTateshina/QvPen_AvatarFollowSystem]
- 最終更新 : [2026/07/28]
+　　　　  : VCC    : [https://chikumatateshina.github.io/QvPen_AvatarFollowSystem/]
+ 最終更新 : [2026/10/06]
 ---------------------------------------------------------------------
 
 本製品「QvPen Avatar Follow System」(以下「本製品」)をご利用いただく前に，本利用規約(以下「本規約」)を必ずお読みください．
@@ -31,6 +32,9 @@
   ・Booth  : https://okumanecco.booth.pm/items/8566107
   ・GitHub : https://github.com/ChikumaTateshina/QvPen_AvatarFollowSystem
     (以下「正規リポジトリ」といいます)
+  ・VCC    : https://chikumatateshina.github.io/QvPen_AvatarFollowSystem/
+    (VRChat Creator Companion 等の VPM クライアント経由での配布．
+     上記ページで公開する VPM リポジトリと，正規リポジトリの GitHub Release に添付するパッケージを指します)
 
 
 ■ 許諾範囲
@@ -115,7 +119,8 @@
                 Twitter : https://twitter.com/Okumanecco
  Distribution : Booth  : [https://okumanecco.booth.pm/items/8566107]
                 GitHub : [https://github.com/ChikumaTateshina/QvPen_AvatarFollowSystem]
- Last updated : [2026/07/28]
+                VCC    : [https://chikumatateshina.github.io/QvPen_AvatarFollowSystem/]
+ Last updated : [2026/10/06]
 ---------------------------------------------------------------------
 
 Before using this product "QvPen Avatar Follow System" (hereinafter "this Product"), please be sure to read these Terms of Use (hereinafter "these Terms").
@@ -140,6 +145,10 @@ By downloading, installing, or using this Product, you are deemed to have agreed
   - Booth  : https://okumanecco.booth.pm/items/8566107
   - GitHub : https://github.com/ChikumaTateshina/QvPen_AvatarFollowSystem
     (hereinafter the "Official Repository")
+  - VCC    : https://chikumatateshina.github.io/QvPen_AvatarFollowSystem/
+    (Distribution through VPM clients such as the VRChat Creator Companion.
+     This means the VPM repository published on the page above and the packages
+     attached to the GitHub Releases of the Official Repository.)
 
 
 * Scope of Permission (What you may do)

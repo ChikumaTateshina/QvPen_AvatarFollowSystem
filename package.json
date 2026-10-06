@@ -1,0 +1,28 @@
+{
+  "name": "com.chikumatateshina.qvpen-avatar-follow-system",
+  "displayName": "QvPen Avatar Follow System",
+  "version": "1.0.0",
+  "unity": "2022.3",
+  "description": "QvPen extension for VRChat worlds. Lines drawn with QvPen near an avatar follow that avatar's nearest humanoid bone, synced to all players. Requires QvPen in the world.",
+  "keywords": [
+    "vrchat",
+    "udon",
+    "udonsharp",
+    "qvpen",
+    "world"
+  ],
+  "author": {
+    "name": "TATESHINA Chikuma",
+    "url": "https://github.com/ChikumaTateshina"
+  },
+  "license": "SEE LICENSE IN Terms_of_Use.txt",
+  "documentationUrl": "https://chikumatateshina.github.io/QvPen_AvatarFollowSystem/",
+  "changelogUrl": "https://github.com/ChikumaTateshina/QvPen_AvatarFollowSystem/releases",
+  "licensesUrl": "https://github.com/ChikumaTateshina/QvPen_AvatarFollowSystem/blob/main/Terms_of_Use.txt",
+  "vpmDependencies": {
+    "com.vrchat.worlds": ">=3.5.0"
+  },
+  "legacyFolders": {
+    "Assets\\TateshinaSystems\\QvPen_AvatarFollowSystem": "d75a933cb4012a14bb1a425cf0fd216d"
+  }
+}
